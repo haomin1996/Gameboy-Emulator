@@ -65,24 +65,28 @@ public class Video {
 					int red = 0;
 					int green = 0;
 					int blue = 0;
-					switch (color) {
-						case 0:
-							red = 255;
-							green = 255;
-							blue = 255;
-						case 1:
-							red = 0xCC;
-							green = 0xCC;
-							blue = 0xCC;
-						case 2:
-							red = 0x77;
-							green = 0x77;
-							blue = 0x77;
-						default:
-							red = 0;
-							green = 0;
-							blue = 0;
-					}
+                                        switch (color) {
+                                                case 0:
+                                                        red = 255;
+                                                        green = 255;
+                                                        blue = 255;
+                                                        break;
+                                                case 1:
+                                                        red = 0xCC;
+                                                        green = 0xCC;
+                                                        blue = 0xCC;
+                                                        break;
+                                                case 2:
+                                                        red = 0x77;
+                                                        green = 0x77;
+                                                        blue = 0x77;
+                                                        break;
+                                                default:
+                                                        red = 0;
+                                                        green = 0;
+                                                        blue = 0;
+                                                        break;
+                                        }
 					int xPix = 0 - tilePixel;
 					xPix *= -1;
 					int pixel = xPos + xPix;
@@ -158,12 +162,12 @@ public class Video {
 			} else {
 				tileNum = (int)(byte)memory.readMemory(tileAddress);
 			}
-			int tileLocation = tileData;
-			if (unSigned) {
-				tileLocation += tileData * 16;
-			} else {
-				tileLocation = tileLocation + (tileNum + 128) * 16;
-			}
+                        int tileLocation;
+                        if (unSigned) {
+                                tileLocation = tileData + tileNum * 16;
+                        } else {
+                                tileLocation = tileData + (tileNum + 128) * 16;
+                        }
 			int line = yPos % 8;
 			line *= 2;
 			byte data1 = memory.readMemory(tileLocation + line);
@@ -179,24 +183,28 @@ public class Video {
 			int red = 0;
 			int green = 0;
 			int blue = 0;
-			switch (color) {
-				case 0:
-					red = 255;
-					green = 255;
-					blue = 255;
-				case 1:
-					red = 0xCC;
-					green = 0xCC;
-					blue = 0xCC;
-				case 2:
-					red = 0x77;
-					green = 0x77;
-					blue = 0x77;
-				default:
-					red = 0;
-					green = 0;
-					blue = 0;
-			}
+                        switch (color) {
+                                case 0:
+                                        red = 255;
+                                        green = 255;
+                                        blue = 255;
+                                        break;
+                                case 1:
+                                        red = 0xCC;
+                                        green = 0xCC;
+                                        blue = 0xCC;
+                                        break;
+                                case 2:
+                                        red = 0x77;
+                                        green = 0x77;
+                                        blue = 0x77;
+                                        break;
+                                default:
+                                        red = 0;
+                                        green = 0;
+                                        blue = 0;
+                                        break;
+                        }
 			int yIndex = memory.readMemory(0xFF44);
 			if (yIndex < 0 || yIndex > 143 || pixel < 0 || pixel > 159) {
 				continue;
@@ -216,39 +224,49 @@ public class Video {
 		byte palette = memory.readMemory(address);
 		int high;
 		int low;
-		switch (colorNum) {
-			case 0:
-				high = 1;
-				low = 0;
-			case 1:
-				high = 3;
-				low = 2;
-			case 2:
-				high = 5;
-				low = 4;
-			case 3:
-				high = 7;
-				low = 6;
-			default:
-				high = 1;
-				low = 0;
-		}
+                switch (colorNum) {
+                        case 0:
+                                high = 1;
+                                low = 0;
+                                break;
+                        case 1:
+                                high = 3;
+                                low = 2;
+                                break;
+                        case 2:
+                                high = 5;
+                                low = 4;
+                                break;
+                        case 3:
+                                high = 7;
+                                low = 6;
+                                break;
+                        default:
+                                high = 1;
+                                low = 0;
+                                break;
+                }
 		byte color = 0;
 		color = (byte) (Util.getVal(palette, high) << 1);
 		color |= Util.getVal(palette, low);
 
-		switch (color) {
-			case 0:
-				res = 0;
-			case 1:
-				res = 1;
-			case 2:
-				res = 2;
-			case 3:
-				res = 3;
-			default:
-				res = 0;
-		}
+                switch (color) {
+                        case 0:
+                                res = 0;
+                                break;
+                        case 1:
+                                res = 1;
+                                break;
+                        case 2:
+                                res = 2;
+                                break;
+                        case 3:
+                                res = 3;
+                                break;
+                        default:
+                                res = 0;
+                                break;
+                }
 		return res;
 	}
 }
