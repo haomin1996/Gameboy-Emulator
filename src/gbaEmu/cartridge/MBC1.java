@@ -1,5 +1,9 @@
 package gbaEmu.cartridge;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 public class MBC1 implements MBC {
 	private byte[] rom;
 	public byte currentRomBank;
@@ -57,10 +61,17 @@ public class MBC1 implements MBC {
 		}
 	}
 	@Override
-	public void saveRam(String fileName) {
-		// TODO Auto-generated method stub
-		
-	}
+       public void saveRam(String fileName) {
+               if (ramBank == null) {
+                       return;
+               }
+               try {
+                       Files.write(Paths.get(fileName), ramBank);
+               } catch (IOException e) {
+                       e.printStackTrace();
+               }
+
+       }
 	
 	private void doRamEnable(int address, byte value) {
 		byte testData = (byte) (value & 0xF);

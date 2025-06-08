@@ -8,19 +8,15 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 
 public class Rom {
-	byte[] content;
-	public byte[] readRom(String filename) {
-		try (InputStream inputStream = new FileInputStream(filename);) {
-			content = inputStream.readAllBytes();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return content;
-	}
+       byte[] content = new byte[0];
+       public byte[] readRom(String filename) {
+               try (InputStream inputStream = new FileInputStream(filename)) {
+                       content = inputStream.readAllBytes();
+               } catch (IOException e) {
+                       throw new RuntimeException("Failed to read ROM file: " + filename, e);
+               }
+               return content;
+        }
 	public String getTitle() {
 		String titleString;
 		if (content.length == 0 ) {
