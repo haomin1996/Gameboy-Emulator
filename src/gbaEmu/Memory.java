@@ -1,11 +1,21 @@
 package gbaEmu;
 
 public class Memory {
-	byte[] mainMemory;
-	CPU cpu;
-	public Memory() {
-		mainMemory = new byte[0x10000];
-	}
+        byte[] mainMemory;
+        CPU cpu;
+        public Memory() {
+                mainMemory = new byte[0x10000];
+        }
+
+        /**
+         * Copy the supplied ROM bytes into the memory area starting at 0x0000.
+         * Only the first 32KB of the ROM are mapped as this emulator does not
+         * implement any banking logic.
+         */
+        public void loadRom(byte[] romData) {
+                int len = Math.min(romData.length, 0x8000);
+                System.arraycopy(romData, 0, mainMemory, 0, len);
+        }
 	public byte readMemory(int address) {
 		return mainMemory[address];
 	}

@@ -24,12 +24,21 @@ public class CPU {
 		this.register = new Register();
 		this.timer = new Timer();
 	}
-	public int executeNextOp() {
-		short nextOp = this.register.pc;
-		this.register.pc++;
-		opMap.get(nextOp).run();
-		return opCycles.get(nextOp);
-	}
+        public int executeNextOp() {
+                int opcode = memory.readMemory(register.pc & 0xFFFF) & 0xFF;
+                register.pc++;
+                if (opcode == 0xCB) {
+                        int cb = memory.readMemory(register.pc & 0xFFFF) & 0xFF;
+                        register.pc++;
+                        opcode = (0xCB << 8) | cb;
+                }
+                Runnable op = opMap.get(opcode);
+                if (op == null) {
+                        Log.fatalf(String.format("Unknown opcode: 0x%X", opcode));
+                }
+                op.run();
+                return opCycles.getOrDefault(opcode, 4);
+        }
 	public void run() throws InterruptedException {
 		while (true) {
 			update();
@@ -108,10 +117,12 @@ public class CPU {
 			Log.fatalf("unknown interrupt: " + id);
 		}
 	}
-	public int initOpcodes() {
-		opcodes = new Opcodes();
-		opMap = new HashMap<>();
-		opCycles = new HashMap<>();
+        public int initOpcodes() {
+                opcodes = new Opcodes();
+                opcodes.cpu = this;
+                opcodes.memory = this.memory;
+                opMap = new HashMap<>();
+                opCycles = new HashMap<>();
 		opMap.put(0x7F, () -> opcodes.OP7F());
 		opCycles.put(0x7F, 4);
 		for (int i = 0x78; i <= 0x7D; i++) {
@@ -479,10 +490,14 @@ public class CPU {
 		opCycles.put(0x2F, 4);
 		opMap.put(0x3F, () -> opcodes.OP3F());
 		opCycles.put(0x3F, 4);
-		opMap.put(0x37, () -> opcodes.OP37());
-		opCycles.put(0x37, 4);
-		opMap.put(0x00, () -> opcodes.OP00());
-		opCycles.put(0x00, 4);
+                opMap.put(0x37, () -> opcodes.OP37());
+                opCycles.put(0x37, 4);
+                opMap.put(0x76, () -> opcodes.OP76());
+                opCycles.put(0x76, 4);
+                opMap.put(0x10, () -> opcodes.OP10());
+                opCycles.put(0x10, 4);
+                opMap.put(0x00, () -> opcodes.OP00());
+                opCycles.put(0x00, 4);
 		opMap.put(0x07, () -> opcodes.OP07());
 		opCycles.put(0x07, 4);
 		opMap.put(0x17, () -> opcodes.OP17());
@@ -1018,10 +1033,10 @@ public class CPU {
 		return ans;
 	}
         public short getValue16() {
-                int value1 = memory.readMemory(register.pc) & 0xFF;
-                int value2 = memory.readMemory(register.pc + 1) & 0xFF;
+                int low = memory.readMemory(register.pc & 0xFFFF) & 0xFF;
+                int high = memory.readMemory((register.pc + 1) & 0xFFFF) & 0xFF;
                 register.pc += 2;
-                return (short) ((value1 << 8) | value2);
+                return (short) ((high << 8) | low);
         }
 	public int decrementHL() {
 		int hl = register.hl();

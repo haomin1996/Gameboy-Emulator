@@ -1183,12 +1183,22 @@ public class Opcodes {
 		cpu.register.cf = !cpu.register.cf;
 		return 0;
 	}
-	public int OP37() {
-		cpu.register.nf = false;
-		cpu.register.hf = false;
-		cpu.register.cf = true;
-		return 0;
-	}
+        public int OP37() {
+                cpu.register.nf = false;
+                cpu.register.hf = false;
+                cpu.register.cf = true;
+                return 0;
+        }
+        // HALT - put CPU into low power mode until an interrupt occurs
+        public int OP76() {
+                cpu.halt = true;
+                return 0;
+        }
+        // STOP instruction is treated the same as HALT in this simplified emulator
+        public int OP10() {
+                cpu.halt = true;
+                return 0;
+        }
 	public int OP00() {
 		return 0;
 	}
