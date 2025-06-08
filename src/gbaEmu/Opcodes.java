@@ -1117,24 +1117,24 @@ public class Opcodes {
 		cpu.putSP(cpu.register.sp - 1);
 		return 0;
 	}
-	public int OPCB() {
-		byte n = cpu.getValue8();
-		if (cpu.opMap.containsKey(0xCB << 2 + n)) {
-			Runnable op = cpu.opMap.get(0xCB << 2 + n);
-			op.run();
-		} else {
-			return -1;
-		}
-		return cpu.opCycles.get(0xCB << 2 + n);
-	}
-	private byte swapByteAndSetFlags(byte a) {
-		byte res = (byte) (((a & 0xF) << 4) | ((a & 0xF0) >> 4));
-		cpu.register.nf = false;
-		cpu.register.hf = false;
-		cpu.register.hf = false;
-		cpu.register.zf = res == 0;
-		return res;
-	}
+        public int OPCB() {
+                byte n = cpu.getValue8();
+                int op = (0xCB << 8) | (n & 0xFF);
+                if (cpu.opMap.containsKey(op)) {
+                        Runnable run = cpu.opMap.get(op);
+                        run.run();
+                        return cpu.opCycles.get(op);
+                }
+                return -1;
+        }
+        private byte swapByteAndSetFlags(byte a) {
+                byte res = (byte) (((a & 0xF) << 4) | ((a & 0xF0) >> 4));
+                cpu.register.nf = false;
+                cpu.register.hf = false;
+                cpu.register.cf = false;
+                cpu.register.zf = res == 0;
+                return res;
+        }
 	public int OPCB37() {
 		cpu.register.a = swapByteAndSetFlags(cpu.register.a);
 		return 0;

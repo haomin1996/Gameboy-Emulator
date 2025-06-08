@@ -101,9 +101,9 @@ public class CPU {
 		case 3:
 			register.pc = 0x58;
 			break;
-		case 4:
-			register.pc = 60;
-			break;
+                case 4:
+                        register.pc = 0x60;
+                        break;
 		default:
 			Log.fatalf("unknown interrupt: " + id);
 		}
@@ -1017,12 +1017,12 @@ public class CPU {
 		register.pc++;
 		return ans;
 	}
-	public short getValue16() {
-		int value1 = memory.readMemory(register.pc);
-		int value2 = memory.readMemory(register.pc + 1);
-		register.pc += 2;
-		return (short) (value1 << 8 + value2);
-	}
+        public short getValue16() {
+                int value1 = memory.readMemory(register.pc) & 0xFF;
+                int value2 = memory.readMemory(register.pc + 1) & 0xFF;
+                register.pc += 2;
+                return (short) ((value1 << 8) | value2);
+        }
 	public int decrementHL() {
 		int hl = register.hl();
 		hl--;
